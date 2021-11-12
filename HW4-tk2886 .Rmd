@@ -34,8 +34,9 @@ crash_df %>% summarize_if(is_numeric, sd, na.rm = T)
 #boxplot
 ```{r}
 boxplot(Values ~ type_of_accidents, data=crash_dfn,
-        main="Working Title",
-        xlab="Types of Accident", ylab="PTSD Score")
+        main= "Relationship between type of crash and PTSD score",
+        xlab="Types of Accident",
+        ylab="PTSD Score")
 ```
 
 
