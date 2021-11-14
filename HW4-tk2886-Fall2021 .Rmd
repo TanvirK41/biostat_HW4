@@ -29,14 +29,12 @@ crash_dfn <-
 # Problem 2a
 ### Generate Descriptive statistics for each group 
 ```{r warning = FALSE}
-#generating descriptive statistics 
 crash_df %>% summary()
 crash_df %>% summarize_if(is_numeric, sd, na.rm = T)
 ```
 
 #boxplot
 ```{r}
-#boxplot 
 boxplot(Values ~ type_of_accidents, data = crash_dfn,
         main = "Distribution of PTSD score for each type of crash",
         xlab = "Types of Accident",
@@ -45,6 +43,9 @@ boxplot(Values ~ type_of_accidents, data = crash_dfn,
 
 ### Analysis n Differences Observed:
 In the data set that was provided, the mean of the PTSD Score for Pedestrian Incidents is the largest among the three types of accidents. The mean of the PTSD Score of bicycle incidents is the second highest and the mean of the PTSD Scores for car incidents is the lowest. The standard deviation for PTSD score for pedestrian incident is 5.44, the standard deviation for PTSD score in bicycle incident is 4.06, and the standard deviation for the PTSD score for car crash is 3.87. Pedestrian has a larger standard deviation than bicycle and car. This indicates that the PTSD score for this pedestrian incidents is more spread out compared to the other two types if crash. When pedestrians is involved in an incident, their PTSD in generall is more varied compared to the other groups (bicycle and cars). 
+
+
+
 
 
 # Problem 2b: 
@@ -72,33 +73,23 @@ Our F-statistics (19.53) is bigger than our critical value (5.72), we reject the
 
 # Problem 2c:
 ```{r}
-# Using Tukey
+# use pairwise.t.test() for Bonferroni, Holm, Benjamini-Hochberg
+pairwise.t.test(crash_dfn$Values, crash_dfn$type_of_accidents, p.adj = 'bonferroni')
+
+# use Tukey
 Tukey_comp = TukeyHSD(res1)
 Tukey_comp
 plot(Tukey_comp)
 ```
-*Analysis": 
-
-
-
-# Problem 2d:
-
-
-
-
-
-
+*Analysis:* We will be using be Tukey's adjustment since Bonferroni is the most conservative method and gives us less power while Tukey's method controls for all pairwise comparisons and it is less conservative. Based on our Tukey's adjustment method, it is indicated that the the mean PTSD score for car and bicycle is different since the adjusted p-value for car-bicycle pairwise is 0.00134 which is smaller than our alpha 0.01. Also the the mean PTSD score for pedestrian and car is different since the adjusted p-value for pedestrian-car pairwise is 0.0000088 which is smaller than our alpha 0.01. 
 
 Problem 3b:
 
-
 ```{r}
-#test_statistics 
 test_statistcs = (15-17.67)^2/17.67 + (18-17.67)^2/17.67 + (20-17.67)^2/17.67 + (18-15.33)^2/15.33 + (15-15.33)^2/15.33 + (13-15.33)^2/15.33
 ```
 
 ```{r}
-#critical_value 
 critical_value = qchisq(.95, 1)
 ```
 
@@ -106,6 +97,7 @@ critical_value = qchisq(.95, 1)
 Problem 3c:
 
 Ho: Relapse Status and types of anti-depressant are independent 
+
 
 Ha: Relase Status and types of anti-depressant are associated/dependent 
 
