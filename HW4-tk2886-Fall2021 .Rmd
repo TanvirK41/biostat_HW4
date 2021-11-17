@@ -7,14 +7,16 @@ output: pdf_document
 
 ```{r echo = FALSE, message = FALSE}
 library(tidyverse)
+library(multcomp)
 ```
 
 
-### Loading the data 
+### Loading the Crash data 
 ```{r}
 crash_df <- 
   read.csv("Crash.csv")
 ```
+
 
 
 ### Tidy the data 
@@ -26,12 +28,27 @@ crash_dfn <-
                values_to = "Values")
 ```
 
+
+
+
 # Problem 2a
 ### Generate Descriptive statistics for each group 
 ```{r warning = FALSE}
 crash_df %>% summary()
 crash_df %>% summarize_if(is_numeric, sd, na.rm = T)
 ```
+
+
+
+
+```{r warning = FALSE}
+crash_dfn %>% 
+  group_by(type_of_accidents) %>% 
+  summarise(n = n(), mean = mean(Values, na.rm = T), 
+            sum = sum(Values, na.rm = T), variance = var(Values, na.rm = T))
+```
+
+
 
 #boxplot
 ```{r}
@@ -71,19 +88,27 @@ Critical Value: `r critical_value`
 Our F-statistics (19.53) is bigger than our critical value (5.72), we reject the null hypothesis. At 0.01 significance level, we reject the null hypothesis and conclude that at least two true mean PTSD score from the three type of crash groups are different. 
 
 
+
+
+
+
+
+
 # Problem 2c:
 ```{r}
-# Using Tukey's Comparison Adjustment 
-Tukey_comp = TukeyHSD(res1)
-Tukey_comp
-plot(Tukey_comp)
+pairwise.t.test(crash_dfn$Values, crash_dfn$type_of_accidents, p.adj = 'bonferroni')
 ```
 *Analysis:* We will be using be Tukey's adjustment since Bonferroni is the most conservative method and gives us less power while Tukey's method controls for all pairwise comparisons and it is less conservative. Based on our Tukey's adjustment method, it is indicated that the the true mean PTSD score for car and bicycle is different since the adjusted p-value for car-bicycle pairwise is 0.00134 which is smaller than our alpha 0.01. Also the the true mean PTSD score for pedestrian and car is different since the adjusted p-value for pedestrian-car pairwise is 0.0000088 which is smaller than our alpha 0.01. Based on the tukey's method, we do not have enough evidence to state that the true mean PTSD score for pedestrian-bicycle pairwise is different. 
 
 
 
 # Problem 2d:
-Based on the data set provided for each type of crash (bicycle, car, pedestrian), our statistical analysis indicated that the mean PTSD score for pedestrian is 37.88 and the mean PTSD score bicycle crash is 32.5. It has been reported by the National Center for PTSD that a PTSD score of 31-33 or higher suggest the patient may benefit from PTSD treatment. Emergency Department physicians may provide additional resources or a better catered treatment plan to individuals involved in pedestrian and bicycle incidents/crashes for reducing their PTSD symptoms. In our statistical analysis, the mean PTSD score for car is 23.43 and it has been reported by the National Center for PTSD that scores lower than 31-33 may indicate the patient either has sub threshold symptoms of PTSD or does not meet criteria for PTSD, and this information should be incorporated into treatment planning when emergency department professionals are creating a treatment plan that individual's recovery. 
+Based on the data set provided for each type of crash (bicycle, car, pedestrian), our statistical analysis indicated that the mean PTSD score for pedestrian is 37.88 and the mean PTSD score bicycle crash is 32.5. It has been reported by the National Center for PTSD that a PTSD score of 31-33 or higher suggest the patient may benefit from PTSD treatment. Emergency Department physicians may provide additional resources or a better catered treatment plan to individuals involved in pedestrian and bicycle incidents/crashes for reducing their PTSD symptoms. In our statistical analysis, the mean PTSD score for car is 23.43 and it has been reported by the National Center for PTSD that scores lower than 31-33 may indicate the patient either has sub threshold symptoms of PTSD or does not meet criteria for PTSD, and this information should be incorporated into treatment planning when emergency department professionals are creating a treatment plan that individual's recovery. Furthermore, our statistical finding indicates that we do not have enough evidence to state that pedestrian and bicycle mean for PTSD score. In both groups the calculated mean and median PTSD score is above 31 and the emergency department physicians need to have a provide better treatment towards these two groups (pedestrian and bicycle incidents) so that they have a less difficulty in recovering after experiencing or witnessing a terrifying event. 
+
+
+Problem 3a:
+The appropriate test I used to address this question of interest is **Chi-Squared of Independence**. Our observational units are collected at random from a population, we are not gathering the data by randomly sampling from each sub-group separately, which is the case of Chi-Squared Test for Homogeneity. Also, we have two categorical variables (relapse and non-relapse) that are being observed for each unit (desipramine users, lithium users, and placebo users). Also we're interested in whether the knowledge of one variable (antidepressants) value provides an information about the value of the other variable (relapse status), i.e. are these two variables independent. Chi-Squared of Homogeneity assesses whether the pattern of relapse was different between the three groups of antidepressants. 
+
 
 
 
@@ -93,20 +118,56 @@ Based on the data set provided for each type of crash (bicycle, car, pedestrian)
 Problem 3b:
 
 ```{r}
-test_statistcs = (15-17.67)^2/17.67 + (18-17.67)^2/17.67 + (20-17.67)^2/17.67 + (18-15.33)^2/15.33 + (15-15.33)^2/15.33 + (13-15.33)^2/15.33
+antidepressant_df = matrix(c(15, 18, 18, 15, 20, 13), nrow=3,ncol=2,byrow=T,
+                  dimnames = list(c("Desipramine","Lithium","Placebo"), 
+                                  c("Relapse","Non-Relpase")))
+
+antidepressant_dfa = addmargins(antidepressant_df)
+antidepressant_dfa
+```
+
+
+```{r}
+test_statistic = (15-17.67)^2/17.67 + 
+  (18-17.67)^2/17.67 + (20-17.67)^2/17.67 + 
+  (18-15.33)^2/15.33 + (15-15.33)^2/15.33 + (13-15.33)^2/15.33
 ```
 
 ```{r}
-critical_value = qchisq(.95, 1)
+critical_value = qchisq(.95, 2)
+```
+
+```{r}
+new_var = chisq.test(antidepressant_df)
+new_var
+new_var$expected
+pval = pchisq(test_statistic, 2, lower.tail = FALSE)
 ```
 
 
-Problem 3c:
+# Problem 3c:
 
-Ho: Relapse Status and types of anti-depressant are independent 
+*Hypotheses:*
+
+**Ho:** Relapse Status and types of anti-depressant are independent (p1=p2=p3)
+
+**Ha:** Relapse Status and types of anti-depressant are associated/dependent 
+
+**Test Statistics:**
+The test statistic is: `r test_statistic`
+
+**Critical Value:**
+The critical value is: `r critical_value`
+
+**P-Value:**
+The p-value is: `r pval`
 
 
-Ha: Relase Status and types of anti-depressant are associated/dependent 
+**Decision Rule:**
+At 0.05 significance level, we reject the null hypothesis when Chi-Squared test is bigger than the critical value. 
+
+**Interpretation in context to our problem:**
+At 0.05 significance level, we fail to reject the null hypothesis because the Chi-squared test value is smaller than our critical value. We conclude that we do not have enough evidence that the subject's relapse is associated with the drug the subject was assigned to. 
 
 
 
