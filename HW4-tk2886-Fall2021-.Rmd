@@ -1,5 +1,5 @@
 ---
-title: "HW4-tk2886-FALL2021"
+title: "HW4-tk2886-2021"
 author: "Tanvir Khan"
 output: pdf_document
 ---
@@ -112,8 +112,6 @@ Tukey_comp
 plot(Tukey_comp)
 ```
 *Analysis:* We will be using be Tukey's adjustment since Bonferroni is the most conservative method and gives us less power while Tukey's method controls for all pairwise comparisons and it is less conservative. Based on our Tukey's adjustment method, it is indicated that the the true mean PTSD score for car and bicycle is different since the adjusted p-value for car-bicycle pairwise is 0.00134 which is smaller than our alpha 0.01. Also the the true mean PTSD score for pedestrian and car is different since the adjusted p-value for pedestrian-car pairwise is 0.0000088 which is smaller than our alpha 0.01. Based on the tukey's method, we do not have enough evidence to state that the true mean PTSD score for pedestrian-bicycle pairwise is different. *It is important to note that in lecture, we did not go over assumptions for these tukey and bonferroni and I emailed the professor and the professor stated that either tukey or bonferroni will be valid to use for this problem.* 
-
-\newpage
 
 
 
