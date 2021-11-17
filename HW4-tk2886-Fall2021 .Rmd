@@ -10,16 +10,13 @@ library(tidyverse)
 library(multcomp)
 ```
 
-
 ### Loading the Crash data 
 ```{r}
 crash_df <- 
   read.csv("Crash.csv")
 ```
 
-
-
-### Tidy the data 
+### Tidying the data 
 ```{r warning = FALSE}
 crash_dfn <-
   crash_df %>%
@@ -28,29 +25,31 @@ crash_dfn <-
                values_to = "Values")
 ```
 
-
-
-
 # Problem 2a
-### Generate Descriptive statistics for each group 
+### Generating Descriptive statistics for each group: 
 ```{r warning = FALSE}
-crash_df %>% summary()
-crash_df %>% summarize_if(is_numeric, sd, na.rm = T)
+crash_df %>% 
+  summary() %>% 
+  knitr::kable(caption = "Mean, Median, Min, Max, 1st & 3rd Quartile Values for each type of crash")
 ```
 
 
+```{r warning = FALSE}
+crash_df %>% 
+  summarize_if(is_numeric, sd, na.rm = T) %>%
+  knitr::kable(caption = "*Standard deviation* for each type of crash")
+```
 
-
+#### mean, sum, variance
 ```{r warning = FALSE}
 crash_dfn %>% 
   group_by(type_of_accidents) %>% 
   summarise(n = n(), mean = mean(Values, na.rm = T), 
-            sum = sum(Values, na.rm = T), variance = var(Values, na.rm = T))
+            sum = sum(Values, na.rm = T), variance = var(Values, na.rm = T)) %>%
+  knitr::kable(caption = "Mean, Variance for each type of crash")
 ```
 
 
-
-#boxplot
 ```{r}
 boxplot(Values ~ type_of_accidents, data = crash_dfn,
         main = "Distribution of PTSD score for each type of crash",
@@ -62,18 +61,30 @@ boxplot(Values ~ type_of_accidents, data = crash_dfn,
 In the data set that was provided, the mean of the PTSD Score for Pedestrian Incidents is the largest among the three types of accidents. The mean of the PTSD Score of bicycle incidents is the second highest and the mean of the PTSD Scores for car incidents is the lowest. The standard deviation for PTSD score for pedestrian incident is 5.44, the standard deviation for PTSD score in bicycle incident is 4.06, and the standard deviation for the PTSD score for car crash is 3.87. Pedestrian has a larger standard deviation than bicycle and car. This indicates that the PTSD score for this pedestrian incidents is more spread out compared to the other two types if crash. When pedestrians is involved in an incident, their PTSD in general is more varied compared to the other groups (bicycle and cars). 
 
 
-
+\newpage 
 
 
 # Problem 2b: 
+
+#### ANOVA TABLE 
 ```{r}
-res1 = aov(Values ~ factor(type_of_accidents), data = crash_dfn)
-summary(res1)
+res1 = aov(Values ~ factor(type_of_accidents), data = crash_dfn) 
+summary(res1) 
+```
+ 
+ 
+ 
+
+
+```{r}
+# Using R-code to obtain critical value 
 critical_value = qf(0.99, 2, 22)
 ```
+
 **Interpretation**: 
 
 *Hypothesis:*
+
 Ho: mu1 = mu2 = mu3
 
 Ha: at least two means are not equal 
@@ -85,10 +96,10 @@ F-Value: 19.53
 Critical Value: `r critical_value`
 
 *Decision Intercepted:*
-Our F-statistics (19.53) is bigger than our critical value (5.72), we reject the null hypothesis. At 0.01 significance level, we reject the null hypothesis and conclude that at least two true mean PTSD score from the three type of crash groups are different. 
+Our F-statistics (19.53) is bigger than our critical value (5.72), we reject the null hypothesis. At 0.01 significance level, we reject the null hypothesis and conclude that at least two of true mean PTSD score from the three type of crash groups are different. 
 
 
-
+\newpage
 
 
 
