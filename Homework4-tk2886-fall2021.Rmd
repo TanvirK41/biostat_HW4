@@ -244,9 +244,9 @@ pval = pchisq(test_statistic, 2, lower.tail = FALSE)
 
 *Hypotheses:*
 
-**Ho:** Relapse Status and types of anti-depressant are independent (p1=p2=p3)
+**Ho:** Relapse and the type of anti-depressant drug are independent (p1=p2=p3)
 
-**Ha:** Relapse Status and types of anti-depressant are associated/dependent 
+**Ha:** Relapse and the type of anti-depressant drug are associated/dependent 
 
 **Test Statistics:**
 The test statistic is: `r test_statistic`
@@ -259,6 +259,6 @@ The p-value is: `r pval`
 
 
 **Interpretation in context to our problem:**
-At 0.05 significance level, we fail to reject the null hypothesis because the Chi-squared test value is smaller than our critical value. We conclude that we do not have enough evidence that the subject's relapse status is associated with the antidepressant drug the subject was assigned to. 
+At 0.05 significance level, we fail to reject the null hypothesis because the Chi-squared test value is smaller than our critical value. We conclude that we do not have enough evidence that the subject's relapse is associated with the antidepressant drug the subject was assigned to. 
 
 
